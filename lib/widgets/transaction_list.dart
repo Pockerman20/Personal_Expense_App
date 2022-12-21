@@ -5,8 +5,9 @@ import '../models/transaction.dart'; // .. -> says to go up by one step in folde
 
 class TransactionList extends StatelessWidget {
   final List<Transaction> transactions;
+  final Function deleteTx;
 
-  TransactionList(this.transactions);
+  TransactionList(this.transactions, this.deleteTx);
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class TransactionList extends StatelessWidget {
     // child: Column(
     return Container(
       // this scroll is used to scroll only the list in the app not the whole screen...
-      height: 300,
+      height: 450,
       child: transactions.isEmpty
           ? Column(
               children: [
@@ -40,64 +41,40 @@ class TransactionList extends StatelessWidget {
           : ListView.builder(
               itemBuilder: (ctx, index) {
                 return Card(
-                  child: Row(
-                    children: <Widget>[
-                      Container(
-                        margin: const EdgeInsets.symmetric(
-                          vertical: 10,
-                          horizontal: 15,
-                        ),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Theme.of(context).primaryColor,
-                            width: 2,
-                          ),
-                        ),
-                        padding: const EdgeInsets.all(10),
-                        // used to separate amount from border by 10 unit space
-                        child: Text(
-                          // tx.amount.toString(),
-                          // '\$ ${tx.amount}',  //print amount in US Dollars
-                          '₹ ${transactions[index].amount.toStringAsFixed(2)}', // print amount in Indian Rupees
-                          // $(in dart) is used for string interpolation
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontStyle: FontStyle.normal,
-                            fontSize: 20,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        ),
+                  elevation: 5,
+                  margin: EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 5,
+                  ),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      radius: 30,
+                      // leading: Container(
+                      //   height: 60,
+                      //   width: 60,
+                      //   decoration: BoxDecoration(
+                      //       color: Colors.amber, shape: BoxShape.circle),
+                      //   // :point-up: is used to make circleAvatar by using container by yourself.
+                      child: Padding(
+                        padding: EdgeInsets.all(6),
+                        child: FittedBox(
+                            //for writing rupees sign use: press CNTL+SHIFT+ (and type) u20b9 and then release.
+                            child: Text(
+                                '₹${transactions[index].amount.toStringAsFixed(2)}')),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            transactions[index].title,
-                            // textAlign: TextAlign.start,
-                            style: Theme.of(context).textTheme.headline6,
-                            // style: TextStyle(
-                            //   fontWeight: FontWeight.bold,
-                            //   fontSize: 16,
-                            //   fontStyle: FontStyle.italic,
-                            //   color: Colors.purple,
-                            // ),
-                          ),
-                          Text(
-                            // tx.date.toString(), //print date without any modification i.e (November 9,2022 06:45:16.345343)
-                            // DateFormat().format(tx.date),  // print date and time i.e (November 9,2022 06:45:13 AM)
-                            DateFormat.yMMMEd()
-                                .format(transactions[index].date),
-                            // textAlign: TextAlign.start,
-                            style: const TextStyle(
-                              // fontWeight: FontWeight.normal,
-                              // fontSize: 15 ,
-                              // fontStyle: FontStyle.normal,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                    ),
+                    title: Text(
+                      transactions[index].title,
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    subtitle: Text(
+                      DateFormat.yMMMd().format(transactions[index].date),
+                    ),
+                    trailing: IconButton(
+                      onPressed: () => deleteTx(transactions[index].id),
+                      icon: Icon(Icons.delete),
+                      color: Theme.of(context).errorColor,
+                    ),
                   ),
                 );
               },

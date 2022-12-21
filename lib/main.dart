@@ -19,20 +19,23 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           primarySwatch: Colors.purple,
           // this is for deprecated accentColor properties.
-          accentColor: Colors.amber,
-          // colorScheme: ColorScheme.fromSwatch().copyWith(
-          //   secondary: Colors.amber,
-          // ),
+          // accentColor: Colors.amber,
+          colorScheme: ColorScheme.fromSwatch().copyWith(
+            secondary: Colors.amber,
+          ),
+          errorColor: Colors.red, // by default error color is red.
           // This line can be used to eliminated upper both line ..
           // colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.purple)
           //     .copyWith(secondary: Colors.amber),
           fontFamily: 'Quicksand',
           textTheme: ThemeData.light().textTheme.copyWith(
-                  titleMedium: const TextStyle(
-                fontFamily: 'Opensans',
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              )),
+                titleLarge: const TextStyle(
+                  fontFamily: 'Opensans',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+                labelLarge: TextStyle(color: Colors.white),
+              ),
           appBarTheme: AppBarTheme(
               // this is for toolbar textStyle.....
               // toolbarTextStyle: ThemeData.light()
@@ -42,7 +45,7 @@ class MyApp extends StatelessWidget {
               //         fontSize: 20,
               //         fontWeight: FontWeight.bold,
               //       ),
-              //     ).bodyText2,
+              //     ).bodyMedium,
               titleTextStyle: ThemeData.light()
                   .textTheme
                   .copyWith(
@@ -52,7 +55,7 @@ class MyApp extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   )
-                  .headline6)),
+                  .titleLarge)),
       home: MyHomePage(),
     );
   }
@@ -96,12 +99,12 @@ class _MyHomePageState extends State<MyHomePage> {
   //       .toList();
   // }
 
-  void _addNewTransaction(String title, double amount) {
+  void _addNewTransaction(String title, double amount, DateTime chosenDate) {
     final txnew = Transaction(
       id: DateTime.now().toString(),
       title: title,
       amount: amount,
-      date: DateTime.now(),
+      date: chosenDate,
     );
 
     setState(() {
@@ -120,6 +123,12 @@ class _MyHomePageState extends State<MyHomePage> {
         );
       },
     );
+  }
+
+  void _deleteTransaction(String id) {
+    setState(() {
+      _userTransaction.removeWhere((tx) => tx.id == id);
+    });
   }
 
   @override
@@ -144,7 +153,7 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Chart(_recentTransactions),
-            TransactionList(_userTransaction),
+            TransactionList(_userTransaction, _deleteTransaction),
           ],
         ),
       ),
