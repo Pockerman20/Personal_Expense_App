@@ -1,5 +1,9 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:personal_expense_app/widgets/adaptive_flat_button.dart';
 
 class NewTransaction extends StatefulWidget {
   // const NewTransaction({super.key});
@@ -45,71 +49,67 @@ class _NewTransactionState extends State<NewTransaction> {
         _selectedDate = pickedDate;
       });
     });
-    // print('....');
   }
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5,
-      child: Container(
-        padding: EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: <Widget>[
-            TextField(
-              decoration: InputDecoration(labelText: 'Title'),
-              // onChanged: (val) {
-              //   titleInput = val;
-              // },
-              controller: _titleController,
-              onSubmitted: (_) => _submitData(), // Annonymous function
-            ),
-            TextField(
-              decoration: InputDecoration(labelText: 'Amount'),
-              // onChanged: (amt) => amountInput = amt, //for saving input given by user
-              controller: _amountController,
-              keyboardType: TextInputType.number,
-              onSubmitted: (_) => _submitData(),
-            ),
-            Container(
-              height: 70,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(_selectedDate == null
-                        ? 'No date chosen!'
-                        : 'Picked Date: ${DateFormat.yMd().format(_selectedDate!)}'),
-                  ),
-                  TextButton(
-                    onPressed: _presentDatePicker,
-                    child: Text('Choose Date'),
-                    style: TextButton.styleFrom(
-                      foregroundColor: Theme.of(context).primaryColor,
-                      textStyle: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
+    return SingleChildScrollView(
+      child: Card(
+        elevation: 5,
+        child: Container(
+          padding: EdgeInsets.only(
+              left: 10,
+              top: 10,
+              right: 10,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              TextField(
+                decoration: InputDecoration(labelText: 'Title'),
+                // onChanged: (val) {
+                //   titleInput = val;
+                // },
+                controller: _titleController,
+                onSubmitted: (_) => _submitData(), // Annonymous function
+              ),
+              TextField(
+                decoration: InputDecoration(labelText: 'Amount'),
+                // onChanged: (amt) => amountInput = amt, //for saving input given by user
+                controller: _amountController,
+                keyboardType: TextInputType.number,
+                onSubmitted: (_) => _submitData(),
+              ),
+              Container(
+                height: 70,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(_selectedDate == null
+                          ? 'No date chosen!'
+                          : 'Picked Date: ${DateFormat.yMd().format(_selectedDate!)}'),
                     ),
-                  ),
-                ],
+                    AdaptiveButton('Choose Date', _presentDatePicker),
+                  ],
+                ),
               ),
-            ),
-            ElevatedButton(
-              // onPressed: () {
-              //   // print(titleInput);
-              //   // print(amountInput);
-              //   // print(_titleController.text);
-              //   // print(_amountController.text);
-              // },
-              onPressed: _submitData,
-              style: TextButton.styleFrom(
-                backgroundColor: Theme.of(context).primaryColor,
-                foregroundColor:
-                    Theme.of(context).textTheme.titleLarge!.foreground?.color,
-              ),
-              child: Text('Add transaction'),
-            )
-          ],
+              ElevatedButton(
+                // onPressed: () {
+                //   // print(titleInput);
+                //   // print(amountInput);
+                //   // print(_titleController.text);
+                //   // print(_amountController.text);
+                // },
+                onPressed: _submitData,
+                style: TextButton.styleFrom(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  foregroundColor:
+                      Theme.of(context).textTheme.titleLarge!.foreground?.color,
+                ),
+                child: Text('Add transaction'),
+              )
+            ],
+          ),
         ),
       ),
     );

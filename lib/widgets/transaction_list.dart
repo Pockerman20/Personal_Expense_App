@@ -20,24 +20,27 @@ class TransactionList extends StatelessWidget {
       // this scroll is used to scroll only the list in the app not the whole screen...
       height: 450,
       child: transactions.isEmpty
-          ? Column(
-              children: [
-                Text(
-                  'No transaction added yet!',
-                  style: Theme.of(context).textTheme.headline6,
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                SizedBox(
-                  height: 200,
-                  child: Image.asset(
-                    'assets/31.1 fonts/images/waiting.png',
-                    fit: BoxFit.cover,
+          ? LayoutBuilder(builder: (ctx, constraints) {
+              return Column(
+                children: [
+                  Text(
+                    'No transaction added yet!',
+                    style: Theme.of(context).textTheme.headline6,
                   ),
-                ),
-              ],
-            )
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  SizedBox(
+                    height: constraints.maxHeight * 0.6,
+                    // height: 200,
+                    child: Image.asset(
+                      'assets/31.1 fonts/images/waiting.png',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ],
+              );
+            })
           : ListView.builder(
               itemBuilder: (ctx, index) {
                 return Card(
@@ -70,11 +73,20 @@ class TransactionList extends StatelessWidget {
                     subtitle: Text(
                       DateFormat.yMMMd().format(transactions[index].date),
                     ),
-                    trailing: IconButton(
-                      onPressed: () => deleteTx(transactions[index].id),
-                      icon: Icon(Icons.delete),
-                      color: Theme.of(context).errorColor,
-                    ),
+                    trailing: MediaQuery.of(context).size.width > 460
+                        ? TextButton.icon(
+                            onPressed: () => deleteTx(transactions[index].id),
+                            icon: Icon(Icons.delete),
+                            label: Text('Delete'),
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.red,
+                            ),
+                          )
+                        : IconButton(
+                            onPressed: () => deleteTx(transactions[index].id),
+                            icon: Icon(Icons.delete),
+                            color: Theme.of(context).errorColor,
+                          ),
                   ),
                 );
               },
