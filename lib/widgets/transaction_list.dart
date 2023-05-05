@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:personal_expense_app/widgets/transaction_item.dart';
+
 import '../models/transaction.dart'; // .. -> says to go up by one step in folder and then search the file
 // import './user_transaction.dart';
 
@@ -7,7 +8,7 @@ class TransactionList extends StatelessWidget {
   final List<Transaction> transactions;
   final Function deleteTx;
 
-  TransactionList(this.transactions, this.deleteTx);
+  const TransactionList(this.transactions, this.deleteTx, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,7 @@ class TransactionList extends StatelessWidget {
                 children: [
                   Text(
                     'No transaction added yet!',
-                    style: Theme.of(context).textTheme.headline6,
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(
                     height: 10,
@@ -41,59 +42,21 @@ class TransactionList extends StatelessWidget {
                 ],
               );
             })
-          : ListView.builder(
-              itemBuilder: (ctx, index) {
-                return Card(
-                  elevation: 5,
-                  margin: EdgeInsets.symmetric(
-                    vertical: 8,
-                    horizontal: 5,
-                  ),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      radius: 30,
-                      // leading: Container(
-                      //   height: 60,
-                      //   width: 60,
-                      //   decoration: BoxDecoration(
-                      //       color: Colors.amber, shape: BoxShape.circle),
-                      //   // :point-up: is used to make circleAvatar by using container by yourself.
-                      child: Padding(
-                        padding: EdgeInsets.all(6),
-                        child: FittedBox(
-                            //for writing rupees sign use: press CNTL+SHIFT+ (and type) u20b9 and then release.
-                            child: Text(
-                                '₹${transactions[index].amount.toStringAsFixed(2)}')),
-                      ),
-                    ),
-                    title: Text(
-                      transactions[index].title,
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    subtitle: Text(
-                      DateFormat.yMMMd().format(transactions[index].date),
-                    ),
-                    trailing: MediaQuery.of(context).size.width > 460
-                        ? TextButton.icon(
-                            onPressed: () => deleteTx(transactions[index].id),
-                            icon: Icon(Icons.delete),
-                            label: Text('Delete'),
-                            style: TextButton.styleFrom(
-                              foregroundColor: Colors.red,
-                            ),
-                          )
-                        : IconButton(
-                            onPressed: () => deleteTx(transactions[index].id),
-                            icon: Icon(Icons.delete),
-                            color: Theme.of(context).errorColor,
-                          ),
-                  ),
-                );
-              },
-              itemCount: transactions.length,
-            ),
-      // ),
-      // ),
+          // : ListView.builder(
+          //     itemBuilder: (ctx, index) {
+          //       return TransactionItem(
+          //           transactions: transactions[index], deleteTx: deleteTx);
+          //     },
+          //     itemCount: transactions.length,
+          //   ),
+          : ListView(
+              children: transactions
+                  .map((tx) => TransactionItem(
+                        key: ValueKey(tx.id),
+                        transactions: tx,
+                        deleteTx: deleteTx,
+                      ))
+                  .toList()),
     );
   }
 }

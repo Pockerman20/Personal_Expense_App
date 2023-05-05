@@ -1,8 +1,6 @@
-import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:personal_expense_app/db/db_helper.dart';
 import 'package:personal_expense_app/widgets/adaptive_flat_button.dart';
 
 class NewTransaction extends StatefulWidget {
@@ -30,6 +28,7 @@ class _NewTransactionState extends State<NewTransaction> {
       return;
     }
     widget.addTx(
+      DateTime.now().toString(),
       enteredTitle,
       enteredAmount,
       _selectedDate,
@@ -41,7 +40,7 @@ class _NewTransactionState extends State<NewTransaction> {
     showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(2022),
+      firstDate: DateTime(2000),
       lastDate: DateTime.now(),
     ).then((pickedDate) {
       if (pickedDate == null) return;
@@ -93,20 +92,30 @@ class _NewTransactionState extends State<NewTransaction> {
                   ],
                 ),
               ),
+              // onPressed: () {
+              //   // print(titleInput);
+              //   // print(amountInput);
+              //   // print(_titleController.text);
+              //   // print(_amountController.text);
+              // },
               ElevatedButton(
-                // onPressed: () {
-                //   // print(titleInput);
-                //   // print(amountInput);
-                //   // print(_titleController.text);
-                //   // print(_amountController.text);
-                // },
-                onPressed: _submitData,
+                onPressed: () async {
+                  _submitData();
+                  await DatabaseHelper.instance.insertRecord({
+                    // DatabaseHelper.id: DateTime.now().toString(),
+                    DatabaseHelper.id: DateTime.now().toString(),
+                    // DatabaseHelper.id: ,
+                    DatabaseHelper.name: _titleController.text,
+                    DatabaseHelper.price: double.parse(_amountController.text),
+                    DatabaseHelper.date: _selectedDate?.toIso8601String()
+                  });
+                },
                 style: TextButton.styleFrom(
                   backgroundColor: Theme.of(context).primaryColor,
                   foregroundColor:
                       Theme.of(context).textTheme.titleLarge!.foreground?.color,
                 ),
-                child: Text('Add transaction'),
+                child: const Text('Add transaction'),
               )
             ],
           ),
