@@ -5,7 +5,7 @@ import '../models/transaction.dart'; // .. -> says to go up by one step in folde
 // import './user_transaction.dart';
 
 class TransactionList extends StatelessWidget {
-  final List<Transaction> transactions;
+  final List<Transactions> transactions;
   final Function deleteTx;
 
   const TransactionList(this.transactions, this.deleteTx, {super.key});

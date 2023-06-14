@@ -31,16 +31,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
           primarySwatch: Colors.purple,
-          // this is for deprecated accentColor properties.
-          // accentColor: Colors.amber,
           colorScheme: ColorScheme.fromSwatch().copyWith(
             secondary: Colors.amber,
           ),
-          // errorColor: Colors.red,
-          // by default error color is red.
-          // This line can be used to eliminated upper both line ..
-          // colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.purple)
-          //     .copyWith(secondary: Colors.amber),
           fontFamily: 'Quicksand',
           textTheme: ThemeData.light().textTheme.copyWith(
                 titleLarge: const TextStyle(
@@ -51,15 +44,6 @@ class MyApp extends StatelessWidget {
                 labelLarge: const TextStyle(color: Colors.white),
               ),
           appBarTheme: AppBarTheme(
-              // this is for toolbar textStyle.....
-              // toolbarTextStyle: ThemeData.light()
-              //     .textTheme.copyWith(
-              //       titleLarge: const TextStyle(
-              //         fontFamily: 'OpenSans',
-              //         fontSize: 20,
-              //         fontWeight: FontWeight.bold,
-              //       ),
-              //     ).bodyMedium,
               titleTextStyle: ThemeData.light()
                   .textTheme
                   .copyWith(
@@ -85,22 +69,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   bool _isShowChart = false;
   String _newTransactionId = '';
-  final List<Transaction> _userTransaction = [
-    // Transaction(
-    //   id: 't1',
-    //   title: 'New Shoes',
-    //   amount: 4390.78,
-    //   date: DateTime.now(),
-    // ),
-    // Transaction(
-    //   id: 't2',
-    //   title: 'Weekly Groceries',
-    //   amount: 893.43,
-    //   date: DateTime.now(),
-    // ),
-  ];
+  List<Transactions> _userTransaction = [];
 
-  List<Transaction> get _recentTransactions {
+  List<Transactions> get _recentTransactions {
     return _userTransaction.where(
       (tx) {
         return tx.date.isAfter(
@@ -111,15 +82,10 @@ class _MyHomePageState extends State<MyHomePage> {
       },
     ).toList();
   }
-  // List<Transaction> get _recentTransactions {
-  //   return _userTransaction
-  //       .where((tx) => DateTime.now().difference(tx.date).inDays <= 7)
-  //       .toList();
-  // }
 
   void _addNewTransaction(
       String id, String title, double amount, DateTime chosenDate) {
-    final txnew = Transaction(
+    final txnew = Transactions(
       id: id,
       title: title,
       amount: amount,
@@ -198,6 +164,36 @@ class _MyHomePageState extends State<MyHomePage> {
     ];
   }
 
+  void checkDatabase() async {
+    DatabaseHelper databaseHelper = DatabaseHelper.instance;
+    await databaseHelper.initDB();
+    List<Map<String, dynamic>> queryRows = await databaseHelper.queryDatabase();
+    if (queryRows.isNotEmpty) {
+      // do something if the database has some elements
+      for (int i = 0; i < queryRows.length; i++) {
+        Map<String, dynamic> row = queryRows.elementAt(i);
+        String id = row[DatabaseHelper.id];
+        String title = row[DatabaseHelper.name];
+        double amount = row[DatabaseHelper.price];
+        String dateStr = row[DatabaseHelper.date];
+        DateTime date = DateTime.parse(dateStr);
+        Transactions tx = Transactions(
+          id: id,
+          title: title,
+          amount: amount,
+          date: date,
+        );
+        _userTransaction.add(tx);
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    checkDatabase();
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -255,7 +251,6 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
     );
-
     return Platform.isIOS
         ? CupertinoPageScaffold(
             navigationBar: appBar as ObstructingPreferredSizeWidget,

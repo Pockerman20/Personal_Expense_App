@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:personal_expense_app/db/db_helper.dart';
 
 import '../models/transaction.dart';
 
@@ -12,7 +13,7 @@ class TransactionItem extends StatefulWidget {
     required this.deleteTx,
   });
 
-  final Transaction transactions;
+  final Transactions transactions;
   final Function deleteTx;
 
   @override
@@ -70,7 +71,11 @@ class _TransactionItemState extends State<TransactionItem> {
         ),
         trailing: MediaQuery.of(context).size.width > 460
             ? TextButton.icon(
-                onPressed: () => widget.deleteTx(widget.transactions.id),
+                onPressed: () async {
+                  widget.deleteTx(widget.transactions.id);
+                  await DatabaseHelper.instance
+                      .deleteRecord(widget.transactions.id);
+                },
                 icon: const Icon(Icons.delete),
                 label: const Text('Delete'),
                 style: TextButton.styleFrom(
@@ -78,7 +83,11 @@ class _TransactionItemState extends State<TransactionItem> {
                 ),
               )
             : IconButton(
-                onPressed: () => widget.deleteTx(widget.transactions.id),
+                onPressed: () async {
+                  widget.deleteTx(widget.transactions.id);
+                  await DatabaseHelper.instance
+                      .deleteRecord(widget.transactions.id);
+                },
                 icon: const Icon(Icons.delete),
                 color: Theme.of(context).colorScheme.error,
               ),

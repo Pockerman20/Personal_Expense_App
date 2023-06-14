@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 // import 'package:sqflite/sqlite_api.dart';
+import '../models/transaction.dart';
 import 'package:path/path.dart';
 
 class DatabaseHelper {
@@ -16,16 +17,6 @@ class DatabaseHelper {
 
   //constructor
   static final DatabaseHelper instance = DatabaseHelper();
-
-  //database initialization
-  // late Database _database;
-
-  // Future<Database> get database async {
-  //   if (_database != null) return _database;
-
-  //   _database = await initDB();
-  //   return _database;
-  // }
 
   // database initialization
   static Database? _database;
@@ -79,8 +70,4 @@ class DatabaseHelper {
     Database? db = await instance.database;
     return await db!.delete(dbTable, where: '$id = ?', whereArgs: [cid]);
   }
-  // Future<int> deleteRecord(int cid) async {
-  //   Database? db = await instance.database;
-  //   return await db!.delete(dbTable, where: '$id = ?', whereArgs: [cid]);
-  // }
 }

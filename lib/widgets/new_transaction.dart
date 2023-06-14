@@ -17,6 +17,7 @@ class _NewTransactionState extends State<NewTransaction> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
   late DateTime? _selectedDate = null;
+  String idnew = DateTime.now().toString();
 
   void _submitData() {
     if (_amountController.text.isEmpty) return;
@@ -28,7 +29,7 @@ class _NewTransactionState extends State<NewTransaction> {
       return;
     }
     widget.addTx(
-      DateTime.now().toString(),
+      idnew,
       enteredTitle,
       enteredAmount,
       _selectedDate,
@@ -92,18 +93,12 @@ class _NewTransactionState extends State<NewTransaction> {
                   ],
                 ),
               ),
-              // onPressed: () {
-              //   // print(titleInput);
-              //   // print(amountInput);
-              //   // print(_titleController.text);
-              //   // print(_amountController.text);
-              // },
               ElevatedButton(
                 onPressed: () async {
                   _submitData();
                   await DatabaseHelper.instance.insertRecord({
                     // DatabaseHelper.id: DateTime.now().toString(),
-                    DatabaseHelper.id: DateTime.now().toString(),
+                    DatabaseHelper.id: idnew,
                     // DatabaseHelper.id: ,
                     DatabaseHelper.name: _titleController.text,
                     DatabaseHelper.price: double.parse(_amountController.text),
